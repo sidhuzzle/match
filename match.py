@@ -3,7 +3,7 @@ import pandas as pd
 import psycopg2 as pg
 import collections, functools, operator
 import numpy as np
-st.cache(ttl=24*3600)
+@st.cache(ttl=24*3600)
 engine = pg.connect("dbname='huzzle_staging' user='postgres' host='huzzle-staging.ct4mk1ahmp9p.eu-central-1.rds.amazonaws.com' port='5432' password='2Yw*PG9x-FcWvc7R'")
 df_tags = pd.read_sql('select * from tags', con=engine)
 df_degrees = pd.read_sql('select * from degrees', con=engine)
@@ -30,68 +30,15 @@ goal_dataframe_mapping = {
     'Land a Placement Year':goal_3,
     'Win Awards & Competitions':goal_4,
     'Secure a Graduate Job':goal_5,
-    'Find a Co-founder & Start a Business':goal_6,
+    'Find a Co-founder & Start a Business':goal_6
     'Meet Like-minded Students & join Societies':goal_7,
     'Expand my Network & Connect with Industry Leaders':goal_8,
     'No goals selected' : goal_9} 
-data = []
-goals = ['Start my Career with a Spring Week','Get a Summer Internship','Get an Internship alongside my Studies', 'Land a Placement Year','Win Awards & Competitions','Secure a Graduate Job','Find a Co-founder & Start a Business', 'Meet Like-minded Students & join Societies','Expand my Network & Connect with Industry Leaders']
-df_touchpoints = pd.read_sql('select * from touchpoints', con=engine)
-grouped_1 = df_touchpoints.groupby(df_touchpoints.state)
-df_touchpoints = grouped_1.get_group(1)
-grouped_2 = df_touchpoints.groupby(df_touchpoints.touchpointable_type)
-df_jobs = grouped_2.get_group("Job")
-df_1 = pd.read_sql('select * from jobs', con=engine)
-df_jobs =  pd.merge(df_jobs, df_1, left_on='touchpointable_id',right_on='id',suffixes=('', '_x'))
-df_jobs = df_jobs.loc[:,~df_jobs.columns.duplicated()]
-df_tagging = pd.read_sql('select * from taggings', con=engine)
-df_jobs =  pd.merge(df_jobs, df_tagging, left_on='id',right_on='taggable_id',suffixes=('', '_x'))
-df_tags = pd.read_sql('select * from tags', con=engine)
-df_jobs = pd.merge(df_jobs,df_tags,left_on='tag_id',right_on='id',suffixes=('', '_x'))
-df_jobs = df_jobs.loc[:,~df_jobs.columns.duplicated()]
-df_jobs['kind'] = df_jobs['kind'].replace([0,1],['Graduate Job','Graduate Job'])
-df_jobs['new_col'] = range(1, len(df_jobs) + 1)
-df_jobs = df_jobs.set_index('new_col')
 
-grouped_3 = df_touchpoints.groupby(df_touchpoints.touchpointable_type)
-df_events = grouped_3.get_group("Event")
-df_2 = pd.read_sql('select * from events', con=engine)
-df_events =  pd.merge(df_events, df_2, left_on='touchpointable_id',right_on='id',suffixes=('', '_x'))
-df_tagging = pd.read_sql('select * from taggings', con=engine)
-df_events =  pd.merge(df_events, df_tagging, left_on='id',right_on='taggable_id',suffixes=('', '_x'))
-df_tags = pd.read_sql('select * from tags', con=engine)
-df_events = pd.merge(df_events,df_tags,left_on='tag_id',right_on='id',suffixes=('', '_x'))
-df_events = df_events.loc[:,~df_events.columns.duplicated()]
-#df_events = df_events.loc[df_events["kind"] != 0]
-df_events['kind'] = df_events['kind'].replace([0,1,2,3,4,5,6,7],['Networking & Social','Networking & Social','Career Fairs','Insight Days','Workshops','Conferences & Talks','Conferences & Talks','Competitions'])
-df_events['new_col'] = range(1, len(df_events) + 1)
-df_events = df_events.set_index('new_col')
-grouped_4 = df_touchpoints.groupby(df_touchpoints.touchpointable_type)
-df_internship = grouped_4.get_group("Internship")
-df_3 = pd.read_sql('select * from internships', con=engine)
-df_internship =  pd.merge(df_internship, df_3, left_on='touchpointable_id',right_on='id',suffixes=('', '_x'))
-df_tagging = pd.read_sql('select * from taggings', con=engine)
-df_internship =  pd.merge(df_internship, df_tagging, left_on='id',right_on='taggable_id',suffixes=('', '_x'))
-df_tags = pd.read_sql('select * from tags', con=engine)
-df_internship = pd.merge(df_internship,df_tags,left_on='tag_id',right_on='id',suffixes=('', '_x'))
-df_internship = df_internship.loc[:,~df_internship.columns.duplicated()]
-df_internship['kind'] = df_internship['kind'].replace([0,1,2,3,4],['Spring Weeks','Summer','Off-cycle','Winter','Virtual Internship'])
-df_internship['new_col'] = range(1, len(df_internship) + 1)
-df_internship = df_internship.set_index('new_col')
-
-df_4 = pd.concat([df_jobs,df_events])
-df = pd.concat([df_4,df_internship])
-df_tc = pd.read_sql('select * from touchpoints_cities', con=engine)
-df = pd.merge(df,df_tc,left_on='id',right_on='touchpoint_id',suffixes=('', '_x'),how = 'left')
-df = df.loc[:,~df.columns.duplicated()]
-df_cities = pd.read_sql('select * from cities', con=engine)
-df_cities.rename(columns = {'name':'city_name'}, inplace = True)
-df = pd.merge(df,df_cities,left_on='city_id',right_on='id',suffixes=('', '_x'),how = 'left')
-df = df.loc[:,~df.columns.duplicated()]
+goals = ['Start my Career with a Spring Week','Get a Summer Internship','Get an Internship alongside my Studies', 'Land a Placement Year','Win Awards & Competitions','Secure a Graduate Job','Find a Co-founder & Start a Business', 'Meet like-minded students','Expand my Network & Meet Industry Leader']
 Goals =  st.multiselect('Enter the goals',goals,key = "one")
 interest = st.multiselect('Enter the interest',df_tags['name'].unique(),key = "two")
-#print(interest)
-weight = [1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,2,1]
+weight = [1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,2,1,1,2,1,2,1,2,1,2]
 Weight = st.multiselect('Enter the weight',weight,key = "three")
 Interest = pd.DataFrame(interest,columns = ['Interest'])
 Weight = pd.DataFrame(Weight,columns = ['Weight'])
@@ -208,3 +155,4 @@ df = df.sort_values(by='matching score',ascending=False)
  
  
 st.write(df)
+    
