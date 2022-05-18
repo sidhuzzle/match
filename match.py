@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import psycopg2 as pg
+import psycopg as pg
 import collections, functools, operator
 import numpy as np
 st.cache(ttl=24*3600)
