@@ -1,0 +1,6 @@
+streamlit
+ez_setup
+setuptools
+config
+psycopg2-binary
+click==8
