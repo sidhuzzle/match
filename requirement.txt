@@ -2,5 +2,5 @@ streamlit
 ez_setup
 setuptools
 config
-psycopg2-binary
+psycopg2
 click==8
