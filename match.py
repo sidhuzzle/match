@@ -30,7 +30,7 @@ goal_dataframe_mapping = {
     'Land a Placement Year':goal_3,
     'Win Awards & Competitions':goal_4,
     'Secure a Graduate Job':goal_5,
-    'Find a Co-founder & Start a Business':goal_6
+    'Find a Co-founder & Start a Business':goal_6,
     'Meet Like-minded Students & join Societies':goal_7,
     'Expand my Network & Connect with Industry Leaders':goal_8,
     'No goals selected' : goal_9} 
